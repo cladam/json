@@ -2,3 +2,4 @@
 pub import "./json_types"
 pub import "./emit"
 pub import "./api"
+pub import "./parser"
