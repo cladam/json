@@ -165,22 +165,3 @@ Run an example:
 hica run examples/basic_parsing.hc
 ```
 
-## Project structure
-
-```sh
-src/
-  json.hc          # Barrel module — import this
-  json_types.hc    # Json type definition
-  parser.hc        # Recursive descent JSON parser
-  emit.hc          # JSON serialization (json_emit)
-  display.hc       # json_show, json_pretty
-  api.hc           # Accessors and pipe-friendly API
-  main.hc          # Demo program
-examples/
-  basic_parsing.hc
-  pipe_navigation.hc
-tests/
-  test_parser.hc
-  test_emit.hc
-  test_api.hc
-```
