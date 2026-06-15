@@ -10,7 +10,7 @@
 
 @description {
     summary: "A hica project"
-    author: ""
-    homepage: ""
-    repository: ""
+    author: "cladam"
+    homepage: "https://www.hica.dev"
+    repository: "https://github.com/cladam/json"
 }
