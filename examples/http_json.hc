@@ -4,10 +4,11 @@
 //   1. GET a JSON response and navigate it with the pipe API
 //   2. Build a JSON body with Json values and POST it
 //
-// Requires the hica http library — add to hica.ini:
-//   [koka]
-//   include = lib/http/src
-//   flags = --cclib=curl
+// Requires the hica http library — add to hica.hml:
+//   @koka {
+//       include: "./lib/http/src"
+//       flags: "--cclib=curl"
+//   }
 
 extern import "http"
 import "../src/json"
