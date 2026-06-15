@@ -152,12 +152,52 @@ println(json_pretty(data, 0))
 // }
 ```
 
+## Using with the HTTP library
+
+The two core patterns when combining JSON with the [hica HTTP library](https://github.com/cladam/hica-http):
+
+**GET → parse → navigate**
+
+```rust
+extern import "http"
+import "./lib/json/src/json"
+
+let resp = http_get("https://api.example.com/users/1")
+match parse_json(resp.body) {
+  Ok(doc) => {
+    let name = Some(doc) |> at("name") |> as_str
+    println(str_or(name, "<no name>"))
+  },
+  Err(e) => println("error: " + e)
+}
+```
+
+**Build JSON → `json_emit` → POST**
+
+```rust
+let payload = JObject([
+  ("name",  JString("Alice")),
+  ("age",   JNumber(30.0)),
+  ("admin", JBool(false))
+])
+
+let post_resp = http_post(
+  "https://api.example.com/users",
+  json_emit(payload),
+  content_type="application/json"
+)
+println("Status: " + show(post_resp.status))
+```
+
+See [examples/http_json.hc](examples/http_json.hc) for a full working example with both patterns.
+
 ## Examples
 
 See the [examples/](examples/) directory for runnable programs:
 
 - [basic_parsing.hc](examples/basic_parsing.hc): Parse a JSON string and pretty-print it
 - [pipe_navigation.hc](examples/pipe_navigation.hc): Navigate nested values, use defaults, inspect structure
+- [http_json.hc](examples/http_json.hc): GET a JSON API and POST a JSON body (requires hica HTTP library)
 
 Run an example:
 
