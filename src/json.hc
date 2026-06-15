@@ -1,5 +1,6 @@
 // json.hc — JSON library (barrel module)
 pub import "./json_types"
-pub import "./emit"
-pub import "./api"
 pub import "./parser"
+pub import "./emit"
+pub import "./display"
+pub import "./api"
