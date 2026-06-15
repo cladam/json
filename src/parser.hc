@@ -7,15 +7,15 @@ pub fun make_cursor(s: string) : Cursor =>
   Cursor { s: s, pos: 0 }
 
 pub fun peek(c: Cursor) : maybe<string> =>
-  if c.pos < str_length(c.s) { Some(c.s[c.pos:c.pos+1]) } else { None }
+  if c.pos < length(c.s) { Some(c.s[c.pos:c.pos+1]) } else { None }
 
 pub fun advance(c: Cursor, n: int) : Cursor =>
   Cursor { s: c.s, pos: c.pos + n }
 
 pub fun is_eof(c: Cursor) : bool =>
-  c.pos >= str_length(c.s)
+  c.pos >= length(c.s)
 
-pub fun skip_ws(c: Cursor) {
+pub fun skip_ws(c: Cursor) : Cursor {
   var cur = c
   while !is_eof(cur) && contains(" \t\n\r", cur.s[cur.pos:cur.pos+1]) {
     cur = advance(cur, 1)
@@ -38,20 +38,11 @@ pub fun parse_value(c: Cursor) : result<(Json, Cursor), string> {
   let ws = skip_ws(c)
   match peek(ws) {
     Some("\"") =>
-      match parse_string_val(ws) {
-        Ok((str, nc)) => Ok((JString(str), nc)),
-        Err(e) => Err(e)
-      },
+      parse_string_val(ws) |> map_result((pair) => match pair { (str, nc) => (JString(str), nc) }),
     Some("\{") =>
-      match parse_object(ws) {
-        Ok((fields, nc)) => Ok((JObject(fields), nc)),
-        Err(e) => Err(e)
-      },
+      parse_object(ws) |> map_result((pair) => match pair { (fields, nc) => (JObject(fields), nc) }),
     Some("[") =>
-      match parse_array(ws) {
-        Ok((items, nc)) => Ok((JArray(items), nc)),
-        Err(e) => Err(e)
-      },
+      parse_array(ws) |> map_result((pair) => match pair { (items, nc) => (JArray(items), nc) }),
     Some("t")  => parse_literal(ws, "true", JBool(true)),
     Some("f")  => parse_literal(ws, "false", JBool(false)),
     Some("n")  => parse_literal(ws, "null", JNull),
@@ -62,9 +53,9 @@ pub fun parse_value(c: Cursor) : result<(Json, Cursor), string> {
 }
 
 pub fun parse_literal(c: Cursor, lit: string, val: Json) : result<(Json, Cursor), string> {
-  let end = c.pos + str_length(lit)
-  if end > str_length(c.s) { Err("unexpected end of input") }
-  else if c.s[c.pos:end] == lit { Ok((val, advance(c, str_length(lit)))) }
+  let end = c.pos + length(lit)
+  if end > length(c.s) { Err("unexpected end of input") }
+  else if c.s[c.pos:end] == lit { Ok((val, advance(c, length(lit)))) }
   else { Err("expected " + lit) }
 }
 
@@ -79,8 +70,8 @@ pub fun parse_escape(c: Cursor) : result<(string, Cursor), string> =>
     Some("\"") => Ok(("\"", advance(c, 1))),
     Some("\\") => Ok(("\\", advance(c, 1))),
     Some("/")  => Ok(("/",  advance(c, 1))),
-    Some("b")  => Ok((char_to_string(chr(8)),  advance(c, 1))),
-    Some("f")  => Ok((char_to_string(chr(12)), advance(c, 1))),
+    Some("b")  => Ok(("\b", advance(c, 1))),
+    Some("f")  => Ok(("\f", advance(c, 1))),
     Some("n")  => Ok(("\n", advance(c, 1))),
     Some("r")  => Ok(("\r", advance(c, 1))),
     Some("t")  => Ok(("\t", advance(c, 1))),
@@ -100,7 +91,7 @@ pub fun parse_string_inner(c: Cursor, acc: string) : result<(string, Cursor), st
     None       => Err("unexpected end of string")
   }
 
-pub fun parse_number(c: Cursor) {
+pub fun parse_number(c: Cursor) : result<(Json, Cursor), string> {
   let start = c.pos
   var cur = c
   if peek(cur) == Some("-") { cur = advance(cur, 1) }
