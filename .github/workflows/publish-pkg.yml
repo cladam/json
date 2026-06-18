@@ -57,7 +57,7 @@ jobs:
           PKG_NAME="${{ steps.meta.outputs.name }}"
           PKG_VERSION="${{ steps.meta.outputs.version }}"
           TARBALL="${PKG_NAME}-${PKG_VERSION}.tar.gz"
-          tar czf "$TARBALL" \
+          tar czf "/tmp/$TARBALL" \
             --exclude='.git' \
             --exclude='.koka' \
             --exclude='*.kk' \
@@ -68,6 +68,7 @@ jobs:
             --exclude='*.json' \
             --exclude='latest' \
             -C "$PKG_DIR" .
+          mv "/tmp/$TARBALL" "$TARBALL"
           echo "TARBALL=$TARBALL" >> $GITHUB_ENV
           echo "PKG_NAME=$PKG_NAME" >> $GITHUB_ENV
           echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
