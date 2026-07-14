@@ -29,9 +29,20 @@ test "string escapes carriage return" {
   assert(json_emit(j) == "\"a\\rb\"")
 }
 
+test "JInt serializes without decimal" {
+  assert(json_emit(JInt(7)) == "7")
+  assert(json_emit(JInt(0)) == "0")
+  assert(json_emit(JInt(-42)) == "-42")
+}
+
 test "array serializes correctly" {
   let j = JArray([JNumber(1.0), JString("a"), JNull])
   assert(json_emit(j) == "[1.0, \"a\", null]")
+}
+
+test "array with JInt serializes correctly" {
+  let j = JArray([JInt(1), JString("a"), JNull])
+  assert(json_emit(j) == "[1, \"a\", null]")
 }
 
 test "object serializes correctly" {

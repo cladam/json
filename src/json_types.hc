@@ -3,6 +3,7 @@
 pub type Json {
     JNull,
     JBool(value: bool),
+    JInt(value: int),
     JNumber(value: float),
     JString(value: string),
     JArray(value: list<Json>),

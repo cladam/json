@@ -98,6 +98,7 @@ pub fun parse_number(c: Cursor) : result<(Json, Cursor), string> {
   while !is_eof(cur) && contains("0123456789", cur.s[cur.pos:cur.pos+1]) {
     cur = advance(cur, 1)
   }
+  let is_float = !is_eof(cur) && (peek(cur) == Some(".") || peek(cur) == Some("e") || peek(cur) == Some("E"))
   if !is_eof(cur) && peek(cur) == Some(".") {
     cur = advance(cur, 1)
     while !is_eof(cur) && contains("0123456789", cur.s[cur.pos:cur.pos+1]) {
@@ -114,9 +115,16 @@ pub fun parse_number(c: Cursor) : result<(Json, Cursor), string> {
     }
   }
   let num_str = cur.s[start:cur.pos]
-  match parse_float(num_str) {
-    Some(n) => Ok((JNumber(n), cur)),
-    None    => Err("invalid number: " + num_str)
+  if is_float {
+    match parse_float(num_str) {
+      Some(n) => Ok((JNumber(n), cur)),
+      None    => Err("invalid number: " + num_str)
+    }
+  } else {
+    match parse_int(num_str) {
+      Some(n) => Ok((JInt(n), cur)),
+      None    => Err("invalid integer: " + num_str)
+    }
   }
 }
 

@@ -32,7 +32,23 @@ test "parse false" {
 test "parse integer" {
   let r = parse_json("42")
   match r {
-    Ok(j)  => assert(json_num(j) == Some(42.0)),
+    Ok(j)  => assert(json_int(j) == Some(42)),
+    Err(_) => assert(false)
+  }
+}
+
+test "parse integer emits without decimal" {
+  let r = parse_json("7")
+  match r {
+    Ok(j)  => assert(json_emit(j) == "7"),
+    Err(_) => assert(false)
+  }
+}
+
+test "parse negative integer" {
+  let r = parse_json("-7")
+  match r {
+    Ok(j)  => assert(json_int(j) == Some(-7)),
     Err(_) => assert(false)
   }
 }

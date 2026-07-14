@@ -83,6 +83,7 @@ pub fun json_emit(j: Json) : string =>
     match j {
       JNull           => "null",
       JBool(b)        => if b { "true" } else { "false" },
+      JInt(n)         => show(n),
       JNumber(n)      => json_number(n),
       JString(s)      => "\"" + escape_string(s) + "\"",
       JArray(items)   => "[" + join(map(items, json_emit), ", ") + "]",

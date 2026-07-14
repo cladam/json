@@ -10,6 +10,7 @@ import "std/string"
 pub fun json_show(j: Json) : string => match j {
   JNull => "null",
   JBool(b) => if b { "true" } else { "false" },
+  JInt(n) => show(n),
   JNumber(n) => json_number(n),
   JString(s) => "\"" + s + "\"",
   JArray(items) => "[array:" + show(length(items)) + "]",

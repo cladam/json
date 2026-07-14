@@ -18,12 +18,14 @@ pub fun json_str(j: Json) : maybe<string> => match j {
 }
 
 pub fun json_int(j: Json) : maybe<int> => match j {
+  JInt(n)    => Some(n),
   JNumber(v) => Some(round(v)),
   _ => None
 }
 
 pub fun json_num(j: Json) : maybe<float> => match j {
   JNumber(v) => Some(v),
+  JInt(n)    => parse_float(show(n)),
   _ => None
 }
 
