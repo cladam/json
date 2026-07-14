@@ -23,7 +23,9 @@ import "json"
 
 - **Null**: `null`
 - **Booleans**: `true`, `false`
-- **Numbers**: integers, floats, negative, scientific notation (`1e10`, `-3.14`)
+- **Numbers**: integers (`42`, `-7`) and floats (`3.14`, `-3.14`, `1e10`, `1.5e-2`)
+  - Integer tokens (no `.` or exponent) parse as `JInt` and emit without a decimal point
+  - Float tokens parse as `JNumber` and emit with the shortest round-trip decimal
 - **Strings**: double-quoted with escape sequences (`\"`, `\\`, `\n`, `\r`, `\t`, `\uXXXX`)
 - **Arrays**: `[1, "two", true]`, nested, trailing whitespace
 - **Objects**: `{"key": value}`, nested, any JSON value as field value
@@ -37,12 +39,15 @@ import "json"
 type Json {
   JNull,
   JBool(value: bool),
+  JInt(value: int),
   JNumber(value: float),
   JString(value: string),
   JArray(value: list<Json>),
   JObject(fields: list<(string, Json)>)
 }
 ```
+
+Use `JInt` when constructing integer values so they serialise without a decimal point (`7` not `7.0`). `JNumber` is for values that are genuinely floating-point.
 
 ### Parsing
 
@@ -144,14 +149,14 @@ json_emit(j: Json) : string   // compact single-line JSON
 Example:
 
 ```rust
-let data = JObject([("name", JString("myapp")), ("port", JNumber(8080.0))])
+let data = JObject([("name", JString("myapp")), ("port", JInt(8080))])
 println(json_emit(data))
-// {"name": "myapp", "port": 8080.0}
+// {"name": "myapp", "port": 8080}
 
 println(json_pretty(data, 0))
 // {
 //   "name": "myapp",
-//   "port": 8080.0
+//   "port": 8080
 // }
 ```
 
@@ -180,7 +185,7 @@ match parse_json(resp.body) {
 ```rust
 let payload = JObject([
   ("name",  JString("Alice")),
-  ("age",   JNumber(30.0)),
+  ("age",   JInt(30)),
   ("admin", JBool(false))
 ])
 
