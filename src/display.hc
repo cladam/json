@@ -1,5 +1,6 @@
 // display.hc — JSON pretty-printing
 import "./json_types"
+import "./emit"
 import "std/string"
 
 // ============================================================
@@ -9,7 +10,7 @@ import "std/string"
 pub fun json_show(j: Json) : string => match j {
   JNull => "null",
   JBool(b) => if b { "true" } else { "false" },
-  JNumber(n) => show_float(n),
+  JNumber(n) => json_number(n),
   JString(s) => "\"" + s + "\"",
   JArray(items) => "[array:" + show(length(items)) + "]",
   JObject(fields) => "[object:" + show(length(fields)) + "]"

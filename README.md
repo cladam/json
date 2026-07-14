@@ -4,16 +4,19 @@ A JSON parser and serializer library for [hica](https://github.com/cladam/hica).
 
 ## Installation
 
-Add as a git submodule to your hica project:
+### 1. Add the package
 
 ```sh
-git submodule add https://github.com/cladam/json.git lib/json
+hica add json
+hica fetch
 ```
 
-Then import the library:
+This records the dependency in `hica.hml` and downloads the package.
 
-```rust
-import "./lib/json/src/json"
+### 2. Import
+
+```hica
+import "json"
 ```
 
 ## Supported JSON

@@ -50,3 +50,26 @@ test "object key with special chars escaped" {
   assert(json_emit(j) == "\{\"ke\\ny\": \"v\"\}")
 }
 
+// --- Number formatting (shortest round-trip) ---
+
+test "decimal number emits without binary noise" {
+  assert(json_emit(JNumber(9.99)) == "9.99")
+}
+
+test "whole number keeps a .0 suffix" {
+  assert(json_emit(JNumber(1.0)) == "1.0")
+  assert(json_emit(JNumber(100.0)) == "100.0")
+  assert(json_emit(JNumber(1000000.0)) == "1000000.0")
+}
+
+test "negative and rounding-carry values format cleanly" {
+  assert(json_emit(JNumber(0.0 - 7.5)) == "-7.5")
+  assert(json_emit(JNumber(9.999)) == "9.999")
+  assert(json_emit(JNumber(2.675)) == "2.675")
+}
+
+test "zero formats as 0.0" {
+  assert(json_emit(JNumber(0.0)) == "0.0")
+}
+
+
